@@ -1,0 +1,25 @@
+# require haxe 3
+#_______________________________________________________________________________
+# Client compilation
+
+# Class Path
+-cp src
+-cp test
+
+# hashlink target
+-hl build\RudyHH.hl
+
+-main Main
+
+#_______________________________________________________________________________
+# Handler compilation
+--next 
+
+# Class Path
+-cp src
+-cp test
+
+# hashlink target
+-hl build\RudyClientHandler.hl
+
+-main MainClientHandler
