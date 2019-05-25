@@ -1,0 +1,3 @@
+os event ?
+handle exit code 1 in main process
+timeout on child process

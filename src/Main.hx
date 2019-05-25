@@ -13,6 +13,7 @@ import haxe.io.Error;
 class Main {
 
 	static public function main() {
+		
 		/*
 		var _aSocketDistant = new List<Socket>();
 		
@@ -92,15 +93,18 @@ private class MyServer extends Server {
 	override function process() {
 		
 		//Sys.sleep( 1 );
-		
 		//var mProcess = new Map<Socket,Process>();
 		for ( oSocket => oProcess in _mProcess ) {
 			
+			// Skip still running process
+			if ( oProcess.exitCode(false) == null )
+				continue;
+		
+			var sMessage = '';
 			try {
-				while ( true ) 
-					//sMessage += oProcess.stdout.readString(1);
+				while ( true ) {
 					oSocket.output.writeByte( oProcess.stdout.readByte() );
-				
+				}
 			} 
 			catch ( e :Eof ) {
 				trace('ClientHandler end response');
@@ -109,11 +113,12 @@ private class MyServer extends Server {
 			}
 			catch ( e :Dynamic ) {
 				
-				trace(e);
+				trace(sMessage);
 				
 				if ( e != Error.Blocked )
 					throw e;
 			}
+			trace(sMessage);
 			
 			var sMessage = '';
 			try {

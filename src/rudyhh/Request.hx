@@ -7,17 +7,26 @@ import haxe.io.Bytes;
  */
 class Request {
 
-	var _sMethod :String;
-	var _sUri :String;
-	var _sHttpVersion :String;
+	var _sMethod :Null<String>;
+	var _sUri :Null<String>;
+	var _sHttpVersion :Null<String>;
 	
 	var _mHeader :Map<String,String>;
 	
-	var _oBody :Bytes;
+	var _oBody :Dynamic;
 	
-	
-	public function new() {
-		
+	public function new(
+		sMethod :String = null,
+		sUri :String = null,
+		sHttpVersion :String = null,
+		mHeader :Map<String,String> = null,
+		oBody :Bytes = null
+	) {
+		_sMethod = sMethod;
+		_sUri = sUri;
+		_sHttpVersion = sHttpVersion;
+		_mHeader = mHeader;
+		_oBody = oBody;
 	}
 	
 	public function getMethod() {
@@ -30,6 +39,10 @@ class Request {
 	
 	public function getHttpVersion() {
 		return _sHttpVersion;
+	}
+	
+	public function getBody() :Dynamic {
+		return _oBody;
 	}
 	
 	

@@ -1,6 +1,7 @@
 package ;
 import rudyhh.RequestReader;
 import rudyhh.Response;
+import rudyhh.RequestReader.State;
 import sys.io.File;
 
 /**
@@ -11,14 +12,16 @@ class MainClientHandler {
 
 	static public function main() {
 		
-		//TODO get uri
-		//var oReader = new RequestReader( Sys.stdin() );
-		//oReader.read()
-		
-		
 		// write std
-		
 		Sys.print( new Response() );
+		
+		//TODO get uri
+		var oReader = new RequestReader( Sys.stdin() );
+		while (oReader.read() != State.HeaderMap ){}
+		var oRequest = oReader.createRequest();
+		
+		
+		//Sys.println( oRequest.getUri() );
 		Sys.print( File.getContent('build/res/index.html') );
 	}
 	
