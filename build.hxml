@@ -13,13 +13,13 @@
 
 #_______________________________________________________________________________
 # Handler compilation
---next 
+#--next 
 
 # Class Path
--cp src
--cp test
+#-cp src
+#-cp test
 
 # hashlink target
--hl build\RudyClientHandler.hl
+#-hl build\RudyClientHandler.hl
 
--main MainClientHandler
+#-main MainClientHandler

@@ -4,20 +4,21 @@ package rudyhh;
  * HTTP response
  * @author 
  */
-class Response {
+class ResponseHeader {
 
 	var _sVersion :String;
 	var _iCode :Int;
 	var _sReasonPhrase :String;
 	var _mHeader :Map<String,String>;
 	
-	public function new() {
+	public function new( iContentLength :Int ) {
 		
 		_sVersion = 'HTTP/1.1';
 		_iCode = 200;
 		_sReasonPhrase = 'OK';
 		_mHeader = [
 			'Content-Type' => 'text/html',
+			'Content-Length' => Std.string( iContentLength ),
 		];
 	}
 	

@@ -48,7 +48,7 @@
   <options>
     <option showHiddenPaths="False" />
     <option testMovie="Custom" />
-    <option testMovieCommand="cmd /c&quot;hl build/RudyHH.hl || pause&quot;" />
+    <option testMovieCommand="run.bat" />
   </options>
   <!-- Plugin storage -->
   <storage />

@@ -4,7 +4,12 @@ import rudyhh.Server;
 import sys.io.Process;
 import sys.net.Host;
 import sys.net.Socket;
+import sys.ssl.Certificate;
+import sys.ssl.Key;
+import sys.ssl.Socket in SocketSSL;
 import haxe.io.Error;
+import sys.thread.Thread;
+import sys.io.File;
 
 /**
  * ...
@@ -15,9 +20,29 @@ class Main {
 	static public function main() {
 		
 		/*
+		var oCurrent = Thread.current();
+		var o = Thread.create(function() {
+			trace('hello');
+			File.saveContent('toto', 'HELLO');
+			oCurrent.sendMessage('DIE');
+		});
+		var s = Thread.readMessage();
+		trace('end :'+s);
+		return;
+		*/
+		
+		/*
 		var _aSocketDistant = new List<Socket>();
 		
-		var _oSocketMaster = new Socket();
+		
+		var _oSocketMaster =  new SocketSSL();
+		_oSocketMaster.setCA(Certificate.loadFile('ssl/homeplanet.pem'));
+		_oSocketMaster.setCertificate( 
+			Certificate.loadFile('ssl/homeplanet.pem'), 
+			Key.loadFile('ssl/homeplanet.key', false, 'homeplanet') 
+		);
+		_oSocketMaster.setHostname('localhost');
+		
 		_oSocketMaster.bind( new Host( 'localhost' ), 8000);
 		_oSocketMaster.setBlocking( false );
 		_oSocketMaster.listen( 9999 );
@@ -44,101 +69,35 @@ class Main {
 		
 		}
 		*/
-		var oServer = new MyServer();
 		
-		while ( oServer.process() ){}
+		var oServer = new MyServer();
+		//SocketSSL.DEFAULT_CA = Certificate.loadFile('ssl/homeplanet.crs');
+		
+		var oSocket =  new SocketSSL();
+		oSocket.setCA(Certificate.loadFile('ssl/homeplanet.pem'));
+		oSocket.setCertificate( 
+			Certificate.loadFile('ssl/homeplanet.pem'), 
+			Key.loadFile('ssl/homeplanet.key', false, 'homeplanet') 
+		);
+		oSocket.setHostname('localhost');
+		oSocket.verifyCert = false;
+		var oServerSSL = new MyServer('localhost', 443, oSocket );
+		
+		while ( true ){
+			oServer.process();
+			//oServerSSL.process(); 
+		}
 	}
 	
 }
 
 private class MyServer extends Server {
 	
-	var _mProcess :Map<Socket,Process>;
-	
 	override public function new( 
 		sHost :String = 'localhost', 
-		iPort :Int = 8000
+		iPort :Int = 8000,
+		oSocket :Socket = null
 	){
-		super( sHost, iPort );
-		
-		_mProcess = new Map<Socket,Process>();
-	}
-	
-	override function _onOpen( oSocket :Socket ) {
-		trace( 'opening : ' + oSocket.peer() );
-		//oSocket.write( 'hi' );
-		
-		_mProcess.set( oSocket, new Process( 'hl build/RudyClientHandler.hl' ) );
-	}
-	override function _onMessage( oSocket :Socket, sMessage :String ) {
-		trace( oSocket.peer() + ' says :' );
-		trace( sMessage );
-		
-		var oProcess = _mProcess.get( oSocket );
-		
-		// Process already finished
-		if ( oProcess.exitCode( false ) != null )
-			return;
-		
-		oProcess.stdin.writeString( sMessage );
-	}
-	override function _onClose( oSocket :Socket ) {
-		if ( !_mProcess.exists( oSocket ) )
-			return;
-		_mProcess.get( oSocket ).close();
-		_mProcess.remove( oSocket );
-		trace( 'closing : '+oSocket.peer() );
-	}
-	
-	override function process() {
-		
-		//Sys.sleep( 1 );
-		//var mProcess = new Map<Socket,Process>();
-		for ( oSocket => oProcess in _mProcess ) {
-			
-			// Skip still running process
-			if ( oProcess.exitCode(false) == null )
-				continue;
-		
-			var sMessage = '';
-			try {
-				while ( true ) {
-					oSocket.output.writeByte( oProcess.stdout.readByte() );
-				}
-			} 
-			catch ( e :Eof ) {
-				trace('ClientHandler end response');
-				oSocket.close();
-				_onClose( oSocket );
-			}
-			catch ( e :Dynamic ) {
-				
-				trace(sMessage);
-				
-				if ( e != Error.Blocked )
-					throw e;
-			}
-			trace(sMessage);
-			
-			var sMessage = '';
-			try {
-				while( true )
-					sMessage += oProcess.stderr.readString(1);
-			} 
-			catch ( e :Eof ) {
-				if( sMessage.length != 0 )
-					trace('Error : '+sMessage);
-				_mProcess.remove( oSocket ); 
-			}
-			catch ( e :Dynamic ) {
-				trace(e);
-				if ( e != Error.Blocked )
-					throw e;
-				
-				//todo handle eof
-			}
-			trace( sMessage );
-		}
-		return super.process();
+		super( sHost, iPort, oSocket );
 	}
 }
