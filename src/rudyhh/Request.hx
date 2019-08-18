@@ -41,7 +41,7 @@ class Request {
 		return _sHttpVersion;
 	}
 	
-	public function getBody() :Dynamic {
+	public function getBody() :Bytes {
 		return _oBody;
 	}
 	

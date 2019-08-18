@@ -18,6 +18,7 @@ class Server {
 	var _iPort :Int;
 	
 	var _oSocketMaster :Socket;
+	var _oRequestHandler :IRequestHandler;
 	
 	var _iConnectionMax = 500;
 	
@@ -27,6 +28,7 @@ class Server {
 	public function new( 
 		sHost :String = 'localhost', 
 		iPort :Int = 8000,
+		oRequestHandle :IRequestHandler,
 		oSocket :Socket = null
 	){
 		//TODO : check host/port
@@ -36,6 +38,7 @@ class Server {
 		
 		
 		_bRunning = true;
+		_oRequestHandler = oRequestHandle;
 		
 		
 		_oSocketMaster = oSocket == null ? new Socket() : oSocket;
@@ -73,7 +76,7 @@ class Server {
 		if ( oSocketDistant == null )
 			return;
 		
-		new RequestHandler( oSocketDistant );
+		_oRequestHandler.handle( oSocketDistant );
 	}
 	
 }
