@@ -31,8 +31,8 @@ class RequestReader {
 		_aSubReader = [
 			{ oReader: new ReaderStringSegment(' ', 10), sKey: 'Method', oState: Begin  },
 			{ oReader: new ReaderStringSegment(' ', 2083), sKey: 'Uri', oState: Method },
-			{ oReader: new ReaderStringSegment("\n", 8000), sKey: 'Version', oState: Uri },
-			{ oReader: new ReaderHeaderMap("\n\n", 9000), sKey: 'HeaderMap', oState: HeaderMap },
+			{ oReader: new ReaderStringSegment("\r\n", 8000), sKey: 'Version', oState: Uri },
+			{ oReader: new ReaderHeaderMap("\r\n", 9000), sKey: 'HeaderMap', oState: HeaderMap },
 			{ oReader: new ReaderBody( this ), sKey: 'Body', oState: Body },
 		];
 	}
@@ -95,20 +95,19 @@ class RequestReader {
 		);
 		
 		_iState++;
-			
 		return getState();
 	}
 	
 
 }
-enum State {
-	Begin;
-	Method;
-	Uri;
-	HttpVersion;
-	HeaderMap;
-	Body;
-	Done;
+enum abstract State(String)  {
+	var Begin;
+	var Method;
+	var Uri;
+	var HttpVersion;
+	var HeaderMap;
+	var Body;
+	var Done;
 }
 typedef ReadingPattern = {
 	var oReader :IReader;
@@ -153,11 +152,17 @@ class ReaderStringSegment implements IReader {
 		
 		var s = null;
 		while ( true  ){
-			
 			try {
-				s = oInput.readString( 1 );
+				s = oInput.readString( 1 );//TODO: use bloking method
 				//trace(s + ':' + StringTools.hex( s.charCodeAt(0)));
+				
 			} catch ( e :Eof  ) {
+				throw e;
+			} catch ( e :Dynamic  ) {
+					//trace(e);
+				if ( e == Error.Blocked ){
+					continue;
+				}
 				throw e;
 			} 
 			

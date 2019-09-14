@@ -45,6 +45,17 @@ class Request {
 		return _oBody;
 	}
 	
+	public function getHeader( sKey :String ) {
+		return _mHeader.get( sKey );
+	}
 	
 	
+	public function toString() {
+		return 
+			'Method: ' + _sMethod + "\n"
+			+ 'URI: ' + _sUri+ "\n"
+			+ 'HTTPVersion: ' + _sHttpVersion + "\n"
+		;//TODO : header ans such
+			
+	}
 }

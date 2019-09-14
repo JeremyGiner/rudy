@@ -7,19 +7,32 @@
 -cp test
 
 # hashlink target
--hl build\RudyHH.hl
+-hl build\RudyServerCgi.hl
 
--main Main
+-main ServerCgi
 
 #_______________________________________________________________________________
 # Handler compilation
-#--next 
+--next 
 
 # Class Path
-#-cp src
-#-cp test
+-cp src
+-cp test
 
 # hashlink target
-#-hl build\RudyClientHandler.hl
+-hl build\HandlerDemo.hl
 
-#-main MainClientHandler
+-main handler_demo.HandlerDemo
+
+#_______________________________________________________________________________
+# TEST
+--next 
+
+# Class Path
+-cp src
+-cp test
+
+# hashlink target
+-hl build\Test.hl
+
+-main Test

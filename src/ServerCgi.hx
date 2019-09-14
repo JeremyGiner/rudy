@@ -1,6 +1,6 @@
 package ;
 import haxe.io.Eof;
-import rudyhh.RequestHandler;
+import rudyhh.RequestHandlerCgi;
 import rudyhh.Server;
 import sys.io.Process;
 import sys.net.Host;
@@ -18,22 +18,21 @@ import haxe.io.Path;
  * ...
  * @author 
  */
-class Main {
+class ServerCgi {
 
 	static public function main() {
 		
 		// Get config path
 		var sConfigPath = "config.json";
 		if ( Sys.args().length == 1 ) {
-			Sys.println( 'Loading config "'+sConfigPath+'"' );
-			var oConfig = Json.parse( File.getContent( sConfigPath ) );
+			sConfigPath = Sys.args()[0];
 		}
 		
 		
 		Sys.println( 'Loading config "'+sConfigPath+'"' );
 		var oConfig = Json.parse( File.getContent( sConfigPath ) );
 		
-		var oServer = new Server( oConfig.address, Std.parseInt( oConfig.port ), new RequestHandler( oConfig.delegate ) );
+		var oServer = new Server( oConfig.address, Std.parseInt( oConfig.port ), new RequestHandlerCgi( oConfig.delegate ) );
 		//SocketSSL.DEFAULT_CA = Certificate.loadFile('ssl/homeplanet.crs');
 		/*
 		var oSocket =  new SocketSSL();

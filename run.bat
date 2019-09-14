@@ -1,2 +1,2 @@
-cd build && hl RudyHH.hl
+cd build && hl RudyServerCgi.hl
 pause
