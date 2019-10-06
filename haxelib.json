@@ -1,0 +1,13 @@
+{
+  "name": "rudy",
+  "url" : "https://github.com/JeremyGiner/rudy",
+  "license": "MIT",
+  "tags": ["server", "http"],
+  "description": "Rudimentary Http Server",
+  "version": "1.0.0",
+  "classPath": "src/",
+  "releasenote": "Initial release, work in progress.",
+  "contributors": ["GINER jeremy"],
+  "dependencies": {
+  }
+}
