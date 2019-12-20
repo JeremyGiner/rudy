@@ -32,7 +32,7 @@ class RequestReader {
 			{ oReader: new ReaderStringSegment(' ', 10), sKey: 'Method', oState: Begin  },
 			{ oReader: new ReaderStringSegment(' ', 2083), sKey: 'Uri', oState: Method },
 			{ oReader: new ReaderStringSegment("\r\n", 8000), sKey: 'Version', oState: Uri },
-			{ oReader: new ReaderHeaderMap("\r\n", 9000), sKey: 'HeaderMap', oState: HeaderMap },
+			{ oReader: new ReaderHeaderMap("\r\n\r\n", 9000), sKey: 'HeaderMap', oState: HeaderMap },
 			{ oReader: new ReaderBody( this ), sKey: 'Body', oState: Body },
 		];
 	}
@@ -195,7 +195,8 @@ class ReaderHeaderMap extends ReaderStringSegment {
 			return null;
 		
 		var m = new StringMap<String>();
-		var aHeader = s.split("\n");
+		var aHeader = s.split("\r\n");
+		
 		for ( s in aHeader ) {
 			var a = s.split(': ');
 			m.set( a[0], a.length > 1 ? a[1] : null );//TODO: remove case sensitiveness
@@ -232,7 +233,8 @@ class ReaderBody implements IReader {
 		var sType = oHeaderMap.get('Content-Type');
 		
 		if ( sType != 'application/json' ) {
-			throw 'content type "' + sType+'" not supported';
+			// TODO : handle json parsing error
+			throw 'content type ' + Json.stringify(sType)+' not supported';
 		}
 		
 		return Json.parse( s );

@@ -20,7 +20,7 @@ class Request {
 		sUri :String = null,
 		sHttpVersion :String = null,
 		mHeader :Map<String,String> = null,
-		oBody :Bytes = null
+		oBody :Dynamic = null
 	) {
 		_sMethod = sMethod;
 		_sUri = sUri;
@@ -41,12 +41,15 @@ class Request {
 		return _sHttpVersion;
 	}
 	
-	public function getBody() :Bytes {
+	public function getBody() :Dynamic {
 		return _oBody;
 	}
 	
 	public function getHeader( sKey :String ) {
 		return _mHeader.get( sKey );
+	}
+	public function getHeaderMap() {
+		return _mHeader;
 	}
 	
 	

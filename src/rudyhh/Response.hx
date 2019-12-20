@@ -22,9 +22,10 @@ class Response {
 	
 	public function new( 
 		iCode :Int = 200, 
-		sReasonPhrase :String = 'OK'
+		sReasonPhrase :String = 'OK',
+		sBody = ""
 	) {
-		_sBody = "";
+		_sBody = sBody;
 		
 		_sVersion = 'HTTP/1.1';
 		_iCode = iCode;
@@ -77,11 +78,14 @@ class Response {
 //_____________________________________________________________________________
 //	Factory
 	
-	static public function create( sBody :String, sType :String ) {
-		var o = new Response();
-		o.setContent( sBody, sType );
-		//TODO : set ETag
+	static public function create500( sBody :String = "" ) {
+		var o = new Response(500, 'Server internal error');
+		o.setContent( sBody );
 		return o;
+	}
+	
+	static public function create403() {
+		return new Response(403, 'Access denied');
 	}
 	
 	static public function create404( sBody :String = "" ) {
@@ -94,6 +98,8 @@ class Response {
 		var o = new Response(304, 'Not modified');
 		return o;
 	}
+	
+	
 	
 //_____________________________________________________________________________
 //	Sub-routine

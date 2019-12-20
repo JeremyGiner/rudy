@@ -32,7 +32,11 @@ class ServerCgi {
 		Sys.println( 'Loading config "'+sConfigPath+'"' );
 		var oConfig = Json.parse( File.getContent( sConfigPath ) );
 		
-		var oServer = new Server( oConfig.address, Std.parseInt( oConfig.port ), new RequestHandlerCgi( oConfig.delegate ) );
+		var oServer = new Server( 
+			oConfig.address, 
+			Std.parseInt( oConfig.port ),
+			new RequestHandlerCgi( oConfig.delegate ) 
+		);
 		//SocketSSL.DEFAULT_CA = Certificate.loadFile('ssl/homeplanet.crs');
 		/*
 		var oSocket =  new SocketSSL();
