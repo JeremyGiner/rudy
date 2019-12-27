@@ -1,4 +1,5 @@
 package rudyhh;
+import haxe.ds.StringMap;
 import haxe.io.Bytes;
 
 /**
@@ -52,6 +53,22 @@ class Request {
 		return _mHeader;
 	}
 	
+	public function getCookie( sKey ) :String {
+		var sCookie = _mHeader.get('Cookie');
+		
+		if ( sCookie == null )
+			return null;
+		var a = sCookie.split(';');
+		var m = new StringMap<String>(); 
+		for ( sItem in a ) {
+			var a = sItem.split('=');
+			if ( a.length != 2 )
+				continue;
+			m.set( a[0], a[1]);
+		}
+		// TODO : cache m
+		return m.get( sKey );
+	}
 	
 	public function toString() {
 		return 

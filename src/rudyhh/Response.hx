@@ -52,6 +52,15 @@ class Response {
 		setHeader(E_TAG_KEY,s);
 	}
 	
+	// TODO put opitonnal directive into param object 
+	public function addCookie( 
+		sKey :String, sValue :String, 
+		bHttpOnly :Bool, bSecure :Bool = false 
+	) {
+		setHeader('Set-Cookie', sKey + '=' + sValue+(bHttpOnly?'; HttpOnly':'') );
+		//TODO : handle multiple headers set cookie
+	}
+	
 	public function setContent( s :String, sType = 'text/html' ) {
 		_sBody = s;
 		
