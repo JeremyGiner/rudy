@@ -1,5 +1,7 @@
 package rudyhh;
 import haxe.ds.StringMap;
+import haxe.io.Bytes;
+import sweet.ribbon.tool.BytesTool;
 
 /**
  * TODO use bytes?
@@ -9,7 +11,7 @@ class Response {
 	var _sVersion :String;
 	var _iCode :Int;
 	var _sReasonPhrase :String;
-	var _sBody :String;
+	var _oBody :Bytes;
 	var _mHeader :StringMap<String>;
 	
 	public static var CONTENT_LENGTH_KEY = 'Content-Length';
@@ -22,15 +24,42 @@ class Response {
 	
 	public function new( 
 		iCode :Int = 200, 
-		sReasonPhrase :String = 'OK',
-		sBody = ""
+		sReasonPhrase :String = 'OK'
 	) {
-		_sBody = sBody;
+		_oBody = null;
 		
 		_sVersion = 'HTTP/1.1';
 		_iCode = iCode;
 		_sReasonPhrase = sReasonPhrase;
 		_mHeader = new StringMap();
+	}
+	
+	static public function createSimple( 
+		iCode :Int = 200, 
+		sReasonPhrase :String = 'OK',
+		sBody :String = null 
+	) {
+		var o = new Response(iCode, sReasonPhrase );
+		if( sBody != null )
+			o.setContent( Bytes.ofString(sBody) );
+		return o;
+	}
+	
+		
+	static public function create500( sBody :String = "" ) {
+		return createSimple(500, 'Server internal error',sBody);
+	}
+	
+	static public function create403() {
+		return createSimple(403, 'Access denied');
+	}
+	
+	static public function create404( sBody :String = "" ) {
+		return createSimple(404, 'Not found',sBody);
+	}
+	
+	static public function create304() {
+		return createSimple(304, 'Not modified');
 	}
 	
 //_____________________________________________________________________________
@@ -61,16 +90,16 @@ class Response {
 		//TODO : handle multiple headers set cookie
 	}
 	
-	public function setContent( s :String, sType = 'text/html' ) {
-		_sBody = s;
+	public function setContent( o :Bytes = null, sType = 'text/html' ) {
+		_oBody = o;
 		
-		if ( _sBody.length == 0 ) {
+		if ( _oBody ==null || _oBody.length == 0 ) {
 			removeHeader(CONTENT_LENGTH_KEY);
 			removeHeader(CONTENT_TYPE_KEY);
 			return;
 		}
 		
-		setHeader(CONTENT_LENGTH_KEY, Std.string(_sBody.length) );
+		setHeader(CONTENT_LENGTH_KEY, Std.string(_oBody.length) );
 		setHeader(CONTENT_TYPE_KEY,sType);
 	}
 	
@@ -81,34 +110,20 @@ class Response {
 		return _sVersion + ' ' + _iCode + ' ' + _sReasonPhrase + CRLF
 			+ _printHeader()
 			+ CRLF
-			+ _sBody
+			+ (_oBody != null ? _oBody.toString() : '')
 		;
 	}
-//_____________________________________________________________________________
-//	Factory
 	
-	static public function create500( sBody :String = "" ) {
-		var o = new Response(500, 'Server internal error');
-		o.setContent( sBody );
-		return o;
+	public function toBytes() {
+		
+		var l = new List<Bytes>();
+		l.add(Bytes.ofString(_sVersion + ' ' + _iCode + ' ' + _sReasonPhrase + CRLF));
+		l.add(Bytes.ofString(_printHeader() + CRLF));
+		if( _oBody != null )
+			l.add(_oBody);
+		
+		return BytesTool.joinList( l );
 	}
-	
-	static public function create403() {
-		return new Response(403, 'Access denied');
-	}
-	
-	static public function create404( sBody :String = "" ) {
-		var o = new Response(404, 'Not found');
-		o.setContent( sBody );
-		return o;
-	}
-	
-	static public function create304() {
-		var o = new Response(304, 'Not modified');
-		return o;
-	}
-	
-	
 	
 //_____________________________________________________________________________
 //	Sub-routine

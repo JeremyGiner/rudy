@@ -154,7 +154,6 @@ class ReaderStringSegment implements IReader {
 		while ( true  ){
 			try {
 				s = oInput.readString( 1 );//TODO: use bloking method
-				//trace(s + ':' + StringTools.hex( s.charCodeAt(0)));
 				
 			} catch ( e :Eof  ) {
 				throw e;
